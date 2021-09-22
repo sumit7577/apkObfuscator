@@ -9,10 +9,40 @@ from kivymd.toast import toast
 from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.metrics import dp
+import subprocess
+import os
+import sys
+from obfuscapk import main
+
+
+obfuscator_name = None
+apk_path = None
 
 Obfuscators = {
-    "name":"sumit"
+    "AdvancedReflection":"AdvancedReflection",
+    "ArithmeticBranch":"ArithmeticBranch",
+    "AssetEncryption":"AssetEncryption",
+    "CallIndirection":"CallIndirection",
+    "ClassRename":"ClassRename",
+    "ConstStringEncryption":"ConstStringEncryption",
+    "DebugRemoval":"DebugRemoval",
+    "FieldRename":"FieldRename",
+    "Goto":"Goto",
+    "LibEncryption":"LibEncryption",
+    "MethodOverload":"MethodOverload",
+    "MethodRename":"MethodRename",
+    "NewAlignment":"NewAlignment",
+    "NewSignature":"NewSignature",
+    "Nop":"Nop",
+    "RandomManifest":"RandomManifest",
+    "Rebuild":"Rebuild",
+    "Reflection":"Reflection",
+    "Reorder":"Reorder",
+    "ResStringEncryption":"ResStringEncryption",
+    "VirusTotal":"VirusTotal"
 }
+
+
 KV = '''
 MDBoxLayout:
     orientation: 'vertical'
@@ -34,7 +64,7 @@ MDBoxLayout:
         MDDropDownItem:
             id: drop_item
             pos_hint: {'center_x': .5, 'center_y': .5}
-            text: 'Item 0'
+            text: 'Select Obfuscation'
             on_release: app.menu.open()
 
         MDRaisedButton:
@@ -42,6 +72,7 @@ MDBoxLayout:
             icon: "assets/file.png"
             pos_hint:{"center_x": 0.5, "center_y": 0.4}
             md_bg_color: app.theme_cls.primary_dark
+            on_press:app.click()
 
 '''
 class IconListItem(OneLineIconListItem):
@@ -82,10 +113,12 @@ class Example(MDApp):
 
     def set_item(self, text_item):
         self.screen.ids.drop_item.set_item(text_item)
+        global obfuscator_name
+        obfuscator_name = text_item
         self.menu.dismiss()
 
     def file_manager_open(self):
-        self.file_manager.show('/')  # output manager to the screen
+        self.file_manager.show(self.user_data_dir)  # output manager to the screen
         self.manager_open = True
 
     def select_path(self, path):
@@ -95,7 +128,7 @@ class Example(MDApp):
         :type path: str;
         :param path: path to the selected directory or file;
         '''
-
+        self.apk_path = path
         self.exit_manager()
         toast(path)
 
@@ -112,6 +145,16 @@ class Example(MDApp):
             if self.manager_open:
                 self.file_manager.back()
         return True
+
+    def click(self):
+        try:
+            main.perform_obfuscation(self.apk_path,[obfuscator_name])
+        except AttributeError as e:
+            toast("Please Select an apk first")
+        except FileNotFoundError as e:
+            toast("Please Select a valid apk file")
+        except Exception as e:
+            toast("Something Error Happened")
 
 
 Example().run()
