@@ -156,5 +156,5 @@ class Example(MDApp):
         except Exception as e:
             toast("Something Error Happened")
 
-
-Example().run()
+if __name__ == "__main__":
+    Example().run()
