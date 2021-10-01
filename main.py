@@ -9,9 +9,7 @@ from kivymd.toast import toast
 from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.metrics import dp
-import subprocess
-import os
-import sys
+import os,sys,subprocess
 from obfuscapk import main
 
 
@@ -108,7 +106,6 @@ class Example(MDApp):
         self.menu.bind()
 
     def build(self):
-        self.theme_cls.theme_style = "Dark"
         return self.screen
 
     def set_item(self, text_item):
@@ -118,7 +115,11 @@ class Example(MDApp):
         self.menu.dismiss()
 
     def file_manager_open(self):
-        self.file_manager.show(self.user_data_dir)  # output manager to the screen
+        if sys.platform != "win32":
+            path = "/storage/emulated/0"
+        else:
+            path = "/"
+        self.file_manager.show(path)  # output manager to the screen
         self.manager_open = True
 
     def select_path(self, path):
@@ -154,7 +155,7 @@ class Example(MDApp):
         except FileNotFoundError as e:
             toast("Please Select a valid apk file")
         except Exception as e:
-            toast("Something Error Happened")
+            toast("Something Error Happened",e)
 
 if __name__ == "__main__":
     Example().run()

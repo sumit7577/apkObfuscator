@@ -20,7 +20,7 @@ class Apktool(object):
         if "APKTOOL_PATH" in os.environ:
             self.apktool_path: str = os.environ["APKTOOL_PATH"]
         else:
-            self.apktool_path: str = f"{os.getcwd()}/assets/apktool.jar"
+            self.apktool_path: str = f"{os.getcwd()}/tools/apktool.jar"
 
         full_apktool_path = shutil.which(self.apktool_path)
 
